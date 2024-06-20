@@ -1,0 +1,139 @@
+@startuml 
+class "admin.LogEntry <管理>" as admin.LogEntry #f4d6f1 {
+    ログエントリー
+    --
+    - id (AutoField)
+    + action_time (DateTimeField)
+    ~ user (ForeignKey)
+    ~ content_type (ForeignKey)
+    + object_id (TextField)
+    + object_repr (CharField)
+    + action_flag (PositiveSmallIntegerField)
+    + change_message (TextField)
+    --
+}
+admin.LogEntry -- auth.User
+admin.LogEntry -- contenttypes.ContentType
+admin.LogEntry .-- action_flag
+
+
+class "auth.Permission <認証と認可>" as auth.Permission #e8f4d6 {
+    パーミッション
+    --
+    - id (AutoField)
+    + name (CharField)
+    ~ content_type (ForeignKey)
+    + codename (CharField)
+    --
+}
+auth.Permission -- contenttypes.ContentType
+
+
+class "auth.Group <認証と認可>" as auth.Group #e8f4d6 {
+    グループ
+    --
+    - id (AutoField)
+    + name (CharField)
+    # permissions (ManyToManyField)
+    --
+}
+auth.Group *--* auth.Permission
+
+
+class "auth.User <認証と認可>" as auth.User #e8f4d6 {
+    ユーザー
+    --
+    - id (AutoField)
+    + password (CharField)
+    + last_login (DateTimeField)
+    + is_superuser (BooleanField)
+    + username (CharField)
+    + first_name (CharField)
+    + last_name (CharField)
+    + email (EmailField)
+    + is_staff (BooleanField)
+    + is_active (BooleanField)
+    + date_joined (DateTimeField)
+    # groups (ManyToManyField)
+    # user_permissions (ManyToManyField)
+    --
+}
+auth.User *--* auth.Group
+auth.User *--* auth.Permission
+
+
+class "contenttypes.ContentType <コンテンツタイプ>" as contenttypes.ContentType #d6f4de {
+    コンテンツタイプ
+    --
+    - id (AutoField)
+    + app_label (CharField)
+    + model (CharField)
+    --
+}
+
+
+class "sessions.Session <セッション>" as sessions.Session #f4e1d6 {
+    セッション
+    --
+    + session_key (CharField)
+    + session_data (TextField)
+    + expire_date (DateTimeField)
+    --
+}
+
+
+class "api.Profile <Api>" as api.Profile #dbd6f4 {
+    profile
+    --
+    - id (AutoField)
+    ~ user_profile (OneToOneField)
+    + img (ImageField)
+    --
+}
+api.Profile -- auth.User
+
+
+class "api.Category <Api>" as api.Category #dbd6f4 {
+    category
+    --
+    - id (AutoField)
+    + item (CharField)
+    --
+}
+
+
+class "api.Task <Api>" as api.Task #dbd6f4 {
+    task
+    --
+    + id (UUIDField)
+    + task (CharField)
+    + description (CharField)
+    + criteria (CharField)
+    + status (CharField)
+    ~ category (ForeignKey)
+    + estimate (IntegerField)
+    ~ owner (ForeignKey)
+    ~ responsible (ForeignKey)
+    + created_at (DateTimeField)
+    + updated_at (DateTimeField)
+    --
+}
+api.Task -- api.Category
+api.Task -- auth.User
+api.Task -- auth.User
+api.Task .-- status
+
+
+enum "action_flag <choices>" as action_flag #EEE{
+    + 1 - (1, '追加')
+    + 2 - (2, '変更')
+    + 3 - (3, '削除')
+}
+
+enum "status <choices>" as status #EEE{
+    + 1 - ('1', 'Not started')
+    + 2 - ('2', 'On going')
+    + 3 - ('3', 'Done')
+}
+
+@enduml

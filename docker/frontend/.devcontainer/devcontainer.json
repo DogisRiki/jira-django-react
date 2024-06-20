@@ -1,0 +1,57 @@
+{
+    "name": "react",
+    "service": "frontend",
+    "workspaceFolder": "/home/node/app",
+    "dockerComposeFile": "../../../compose.yaml",
+    "remoteUser": "node",
+    "shutdownAction": "stopCompose",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "esbenp.prettier-vscode",
+                "dbaeumer.vscode-eslint",
+                "dsznajder.es7-react-js-snippets",
+                "vitest.explorer",
+                "oderwat.indent-rainbow",
+                "formulahendry.auto-close-tag",
+                "formulahendry.auto-rename-tag",
+                "mikestead.dotenv"
+            ],
+            "settings": {
+                "files.encoding": "utf8",
+                "files.eol": "\n",
+                "editor.detectIndentation": false,
+                "editor.renderWhitespace": "boundary",
+                "editor.insertSpaces": true,
+                "editor.formatOnSave": true,
+                "editor.formatOnPaste": true,
+                "editor.formatOnType": false,
+                "files.insertFinalNewline": true,
+                "files.trimFinalNewlines": true,
+                "files.trimTrailingWhitespace": true,
+                "editor.codeActionsOnSave": {
+                    "source.fixAll.eslint": "explicit"
+                },
+                "eslint.format.enable": false,
+                "eslint.experimental.useFlatConfig": false, // ESLint V9以降(Flat Config)を使用するならここをtrueにする
+                "editor.defaultFormatter": "esbenp.prettier-vscode",
+                "typescript.tsdk": "/home/node/app/node_modules/typescript/lib",
+                "typescript.tsserver.watchOptions": {
+                    "watchFile": "useFsEvents"
+                },
+                "files.watcherExclude": {
+                    "**/.git/objects/**": true,
+                    "**/.git/subtree-cache/**": true,
+                    "**/node_modules/*/**": true,
+                    "**/.hg/store/**": true
+                },
+                "emmet.triggerExpansionOnTab": true,
+                "emmet.includeLanguages": {
+                        "javascript": "javascriptreact",
+                        "typescript": "typescriptreact"
+                },
+                "window.title": "${activeEditorShort} / ${rootName}"
+            }
+        }
+    }
+}

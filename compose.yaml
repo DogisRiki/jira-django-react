@@ -1,0 +1,82 @@
+services:
+  db:
+    container_name: postgresql
+    build:
+      context: .
+      dockerfile: docker/db/Dockerfile
+    ports:
+      - 5432:5432
+    environment:
+      TZ: Asia/Tokyo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: jira
+    restart: always
+    command: -c 'config_file=/etc/postgresql/postgresql.conf'
+    volumes:
+      - type: volume
+        source: db-data
+        target: /var/lib/postgresql/data
+    configs:
+      - source: postgres_config
+        target: /etc/postgresql/postgresql.conf
+    networks:
+      - my-network 
+
+  frontend:
+    container_name: react
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+    ports:
+      - 5173:5173
+      - 6006:6006
+    environment:
+      CHOKIDAR_USEPOLLING: true
+    tty: true
+    volumes:
+      - type: bind
+        source: ./frontend
+        target: /home/node/app
+      - type: volume
+        source: node_modules
+        target: /home/node/app/node_modules
+    depends_on:
+      - db
+      - backend
+    networks:
+      - my-network 
+  
+  backend:
+    container_name: django
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    ports:
+      - 8000:8000
+    tty: true
+    volumes:
+      - ./backend:/home/django/app
+      - django-cache-data:/home/django/app/.pytest_cache
+      - django-cache-data:/home/django/app/.ruff_cache
+      - django-cache-data:/home/django/app/.mypy_cache
+    depends_on:
+      - db
+    networks:
+      - my-network 
+
+volumes:
+  db-data:
+    name: named-db-data
+  node_modules:
+    name: named-node_modules
+  django-cache-data:
+    name: named-django-cache-data
+
+configs:
+  postgres_config:
+    file: ./docker/db/postgresql.conf
+
+networks:
+  my-network:
+    driver: bridge

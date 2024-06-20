@@ -1,0 +1,84 @@
+[tool.poetry]
+name = "jira-api"
+version = "0.1.0"
+description = ""
+authors = ["Riki"]
+
+[tool.poetry.dependencies]
+python = "3.11.5"
+django = "3.1"
+djangorestframework = "3.11.1"
+django-cors-headers = "3.4.0"
+djangorestframework-simplejwt = "4.6.0"
+pyjwt = "2.0.0"
+pillow = "^10.3.0"
+djoser = "2.0.3"
+psycopg2 = "^2.9.9"
+django-environ = "^0.11.2"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.4.7"
+mypy = "^1.10.0"
+pydantic = "^2.7.2"
+pytest = "^8.2.1"
+pytest-cov = "^5.0.0"
+coverage = "^7.5.3"
+taskipy = "^1.12.2"
+django-model2puml = "^0.4.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+target-version = "py311"
+select = [
+    "E",    # pycodestyle error
+    "F",    # Pyflakes
+    "W",    # pycodestyle warning
+    "I",    # isort
+    "DJ",   # flake8-django
+    "B",    # flake8-bugbear
+    "N"     # pep8-naming
+]
+ignore = ["E501", "D203", "D212", "D400", "D415"]
+fixable = ["ALL"]
+exclude = [
+    ".ruff_cache",
+    ".pytest_cache",
+    ".mypy_cache",
+    "__pycache__",
+    "__pypackages__",
+]
+line-length = 120
+indent-width = 4
+
+[tool.mypy]
+ignore_missing_imports = true  # インポートが見つからない場合にエラーを無視
+show_error_context = true      # エラーの前後の文脈情報を表示
+show_column_numbers = true     # エラーの発生位置として、行番号に加えて列番号も表示
+disallow_untyped_defs = true   # 型注釈のない関数定義を禁止
+no_implicit_optional = true    # デフォルトでNoneを許可する型注釈を禁止
+warn_return_any = true         # 関数の戻り値の型がAnyである場合に警告を表示
+check_untyped_defs = true      # 型注釈のない関数も型チェックの対象とする
+exclude = [
+    ".ruff_cache/",
+    ".pytest_cache/",
+    ".mypy_cache/",
+    "__pycache__",
+    "__pypackages__",
+]
+
+[tool.taskipy.tasks]
+# poetry run task タスク名 で実行する
+start = "python manage.py runserver 0.0.0.0:8000"                          # Djangoサーバー起動
+makemigrations = "python manage.py makemigrations"                         # マイグレーションファイル作成
+migrate = "python manage.py migrate"                                       # DBのスキーマ更新
+createsuperuser = "python manage.py createsuperuser"                       # スーパーユーザー作成
+test = "pytest -v tests"                                                   # 通常のテスト
+test-cov-c0 = "pytest --cov -v tests"                                      # C0カバレッジ
+test-cov-c1 = "pytest --cov --cov-branch -v tests"                         # C1カバレッジ
+test-cov-c0-html = "pytest --cov --cov-report=html -v tests"               # C0カバレッジHTML出力
+test-cov-c1-html = "pytest --cov --cov-branch --cov-report=html -v tests"  # C1カバレッジHTML出力
+puml = "python manage.py generate_puml"                                    # models.pyからPlantUMLのER図(puml)を作成する
+puml-choices = "python manage.py generate_puml --add-choices"              # models.pyからPlantUMLのER図(puml)を選択肢付きで作成する
